@@ -25,11 +25,15 @@ sudo apt install -y tros-racing-obstacle-detection-yolo
 source /opt/tros/local_setup.bash
 cp -r /opt/tros/lib/racing_obstacle_detection_yolo/config/ .
 
+# web端可视化障碍物（启动功能后在浏览器打开 ip:8000）
+export WEB_SHOW=TRUE
+
 # 仿真（使用仿真模型）
 ros2 launch racing_obstacle_detection_yolo racing_obstacle_detection_yolo_simulation.launch.py
 
 # 实际场景（使用实际场景中的模型）
 ros2 launch racing_obstacle_detection_yolo racing_obstacle_detection_yolo.launch.py
+
 ```
 
 
