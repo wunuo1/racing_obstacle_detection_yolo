@@ -220,13 +220,13 @@ ObstacleDetectionNode::ObstacleDetectionNode(const std::string& node_name,
     hbm_img_subscription_ =
         this->create_subscription_hbmem<hbm_img_msgs::msg::HbmMsg1080P>(
             sub_img_topic_,
-            10,
+            1,
             std::bind(&ObstacleDetectionNode::FeedHbmImg, this, std::placeholders::_1));
   } else {
     ros_img_subscription_ =
         this->create_subscription<sensor_msgs::msg::Image>(
             sub_img_topic_,
-            10,
+            1,
             std::bind(&ObstacleDetectionNode::FeedImg, this, std::placeholders::_1));
   }
   // 创建消息发布者，发布算法推理消息
@@ -343,7 +343,7 @@ void ObstacleDetectionNode::FeedHbmImg(
 
   // 4
   // 使用创建的算法输入和输出数据，以异步模式运行推理，推理结果通过PostProcess接口回调返回
-  if (Run(inputs, dnn_output, nullptr, false) < 0) {
+  if (Run(inputs, dnn_output, nullptr, true) < 0) {
     RCLCPP_INFO(rclcpp::get_logger("ObstacleDetectionNode"), "Run predict fail!");
   }
 }
