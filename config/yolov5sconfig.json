@@ -1,5 +1,5 @@
 {
-	"model_file": "/opt/nodehub_model/race_detection/race_obstacle_detection.bin",
+	"model_file": "config/race_obstacle_detection.bin",
 	"class_num": 1,
 	"cls_names_list": "config/obstacles.list"
 }

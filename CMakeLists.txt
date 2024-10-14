@@ -67,6 +67,7 @@ link_directories(
   ${SYS_ROOT}/usr/lib/hbbpu/
   ${SYS_ROOT}/usr/lib/hbmedia/
   ${HOBOTCV_LIB_INSTALL_PATH}
+  /usr/hobot/lib
 )
 
 include_directories(
