@@ -21,7 +21,7 @@ git clone https://github.com/wunuo1/racing_obstacle_detection_yolo.git -b featur
 
 # 编译
 cd ..
-source /opt/tros/setup.bash
+source /opt/tros/humble/setup.bash
 colcon build
 ```
 
