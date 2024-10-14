@@ -78,3 +78,5 @@ RDK obtains environmental data in front of the car through a camera, and the ima
 
 # Note
 This feature pack provides models for identifying obstacles in the Gazebo simulation environment as well as models for identifying obstacles in specific real-world scenarios. If you collect your own dataset for training, please note to replace them.
+
+Simulation environment reference：https://github.com/wunuo1/race-sim/tree/main
