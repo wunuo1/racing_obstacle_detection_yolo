@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <cv_bridge/cv_bridge.h>
+#include <fstream>
+
 #include "ai_msgs/msg/perception_targets.hpp"
 #include "dnn_node/dnn_node.h"
 #include "dnn_node/util/image_proc.h"
@@ -171,8 +173,13 @@ class ObstacleDetectionNode : public hobot::dnn_node::DnnNode {
   int model_input_height_ = -1;
 
   // 图片消息订阅者
-  rclcpp::SubscriptionHbmem<hbm_img_msgs::msg::HbmMsg1080P>::ConstSharedPtr
+#ifdef UBUTNU_22
+    rclcpp::Subscription<hbm_img_msgs::msg::HbmMsg1080P>::ConstSharedPtr
       hbm_img_subscription_ = nullptr;
+#else
+    rclcpp::SubscriptionHbmem<hbm_img_msgs::msg::HbmMsg1080P>::ConstSharedPtr
+      hbm_img_subscription_ = nullptr;
+#endif
   rclcpp::Subscription<sensor_msgs::msg::Image>::ConstSharedPtr
       ros_img_subscription_ = nullptr;
   // 算法推理结果消息发布者
@@ -217,11 +224,19 @@ ObstacleDetectionNode::ObstacleDetectionNode(const std::string& node_name,
   LoadConfig(config_file_,yolo5_config_);
   // 创建消息订阅者，从摄像头节点订阅图像消息
   if (is_shared_mem_sub_ == true){
+#ifdef UBUTNU_22
+    hbm_img_subscription_ =
+        this->create_subscription<hbm_img_msgs::msg::HbmMsg1080P>(
+            sub_img_topic_,
+            1,
+            std::bind(&TargetDetectionNode::FeedHbmImg, this, std::placeholders::_1));
+#else
     hbm_img_subscription_ =
         this->create_subscription_hbmem<hbm_img_msgs::msg::HbmMsg1080P>(
             sub_img_topic_,
             1,
             std::bind(&ObstacleDetectionNode::FeedHbmImg, this, std::placeholders::_1));
+#endif
   } else {
     ros_img_subscription_ =
         this->create_subscription<sensor_msgs::msg::Image>(
@@ -268,7 +283,11 @@ int ObstacleDetectionNode::SetNodePara() {
   // 指定算法推理使用的任务数量，YOLOv5算法推理耗时较长，指定使用4个任务进行推理
   dnn_node_para_ptr_->task_num = 1;
   // 不通过bpu_core_ids参数指定算法推理使用的BPU核，使用负载均衡模式
+#ifdef UBUTNU_22
+  dnn_node_para_ptr_->bpu_core_ids.push_back(HB_BPU_CORE_0);
+#else
   dnn_node_para_ptr_->bpu_core_ids.push_back(hobot::dnn_node::BPUCoreIDType::BPU_CORE_0);
+#endif
   return 0;
 }
 

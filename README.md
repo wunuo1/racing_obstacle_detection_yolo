@@ -1,68 +1,78 @@
-# 功能介绍
+# Function Introduction
 
-基于深度学习的方法识别赛道中的障碍物，使用模型为YOLOv5s
+Using deep learning methods to identify obstacles in the track, using the YOLOv5s model
 
-# 使用方法
+# Usage
 
-## 准备工作
+## Preparations
 
-具备真实的机器人或机器人仿真模块，包含运动底盘、相机及RDK套件，并且能够正常运行。
+Equipped with a real robot or robot simulation module, including a motion chassis, camera, and RDK kit, and able to operate normally.
 
-## 安装功能包
+## Compile and Run
+**1.Compile**
 
-**1.安装功能包**
-
-启动机器人后，通过终端SSH或者VNC连接机器人，点击本页面右上方的“一键部署”按钮，复制如下命令在RDK的系统上运行，完成相关Node的安装。
+After starting the robot, connect to it via SSH or VNC on the terminal, open the terminal, pull the corresponding code, and compile and install it
 
 ```bash
-sudo apt update
-sudo apt install -y tros-racing-obstacle-detection-yolo
+# Pull the target detection code code
+mkdir -p ~/racing_ws/src && cd ~/racing_ws/src
+
+git clone https://github.com/wunuo1/racing_obstacle_detection_yolo.git -b feature-x3
+
+# Compile
+cd ..
+
+# humble
+source /opt/tros/humble/setup.bash
+# foxy
+source /opt/tros/setup.bash
+
+colcon build
 ```
 
-**2.运行障碍物检测功能**
+**2.Run object detection function**
 
 ```shell
-source /opt/tros/local_setup.bash
-cp -r /opt/tros/lib/racing_obstacle_detection_yolo/config/ .
+source ~/racing_ws/install/setup.bash
+cp -r ~/racing_ws/install/racing_obstacle_detection_yolo/lib/racing_obstacle_detection_yolo/config/ .
 
-# web端可视化障碍物（启动功能后在浏览器打开 ip:8000）
+# Visualize obstacles on the web (open IP: 8000 in the browser after activating the feature)
 export WEB_SHOW=TRUE
 
-# 仿真（使用仿真模型）
+# Simulation (using simulation models)
 ros2 launch racing_obstacle_detection_yolo racing_obstacle_detection_yolo_simulation.launch.py
 
-# 实际场景（使用实际场景中的模型）
+# Actual scenario (using models from actual scenarios)
 ros2 launch racing_obstacle_detection_yolo racing_obstacle_detection_yolo.launch.py
-
 ```
 
 
-# 原理简介
+# Principle Overview
 
-地平线RDK通过摄像头获取小车前方环境数据，图像数据通过训练好的YOLO模型进行推理得到障碍物的图像坐标值并发布。
+RDK obtains environmental data in front of the car through a camera, and the image data is inferred using a trained YOLO model to obtain the image coordinate values of obstacles and published.
 
-# 接口说明
+# Interface Description
 
-## 话题
+## Topics
 
-### Pub话题
+### Published Topics
 
-| 名称                          | 消息类型                                                     | 说明                                                   |
+| Name                          | Type                                                     | Description                                                   |
 | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
-| /racing_obstacle_detection    | ai_msgs/msg/PerceptionTargets             | 发布障碍物的图像坐标                 |
+| /racing_obstacle_detection    | ai_msgs/msg/PerceptionTargets             | Publishes information about obstacles                 |
 
-### Sub话题
-| 名称                          | 消息类型                                                     | 说明                                                   |
+### Subscribed Topics
+| Name                          | Type                                                     | Description                                                   |
 | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
-| /hbmem_img或/image_raw       | hbm_img_msgs/msg/HbmMsg1080P或sensor_msgs/msg/Image        | 接收相机发布的图片消息（640x480）                   |
+| /hbmem_img或/image_raw       | hbm_img_msgs/msg/HbmMsg1080P或sensor_msgs/msg/Image        | Receive image messages posted by the camera (640x480)     |
 
-## 参数
+## Parameters
 
-| 参数名                | 类型        | 说明                                                                                                                                 |
+| Parameter Name       | Type        | Description    |
 | --------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| sub_img_topic       | string |     接收的图片话题名称，请根据实际接收到的话题名称配置，默认值为/hbmem_img |
-| is_shared_mem_sub   | bool | 是否使用共享内存，请根据实际情况配置，默认值为True |
-| config_file | string | 配置文件读取路径，请根据识别情况配置，默认值为config/yolov5sconfig_simulation.json |
+| sub_img_topic       | string | Please configure the received image topic name based on the actual received topic name. The default value is/hbmem_img |
+| is_shared_mem_sub   | bool | Whether to use shared memory, please configure according to the actual situation, default value is True |
+| config_file | string | Please configure the path for reading the configuration file based on the recognition situation. The default value isconfig/yolov5sconfig_simulation.json |
 
-# 注意
-该功能包提供gazebo仿真环境中识别障碍物的模型以及特定的实际场景中识别障碍物的模型，若自行采集数据集进行训练，请注意替换。
+# Note
+This feature pack provides models for identifying obstacles in the Gazebo simulation environment as well as models for identifying obstacles in specific real-world scenarios. If you collect your own dataset for training, please note to replace them.
