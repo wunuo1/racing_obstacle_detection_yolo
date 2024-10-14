@@ -79,3 +79,5 @@ ros2 launch racing_obstacle_detection_yolo racing_obstacle_detection_yolo.launch
 
 # 注意
 该功能包提供gazebo仿真环境中识别障碍物的模型以及特定的实际场景中识别障碍物的模型，若自行采集数据集进行训练，请注意替换。
+
+仿真环境参考：https://github.com/wunuo1/race-sim/tree/main
